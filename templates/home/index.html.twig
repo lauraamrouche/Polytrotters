@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+    <div class="jumbotron mt-3">
+        <h1 class="display-3">Bienvenue sur PolyTrotters</h1>
+        <p class="lead">Bienvenue sur le premier réseau social des voyages.</p>
+        <hr class="my-4">
+        <p>Vous aimez les voyages, vous voulez partager vos voyages et suivre les voyages de vos amis. C'est ici
+            que ça se passe.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Suivez nous</a>
+        </p>
+        <hr>
+        <div class="container">
+
+            {% for poste in postes %}
+
+
+            <div class="card m-3">
+                <h3 class="card-header">{{poste.trotter}} {{poste.id}} </h3>
+                <div class="card-body">
+                    <h5 class="card-title">{{poste.titrePoste}}</h5>
+                    <h6 class="card-subtitle text-muted">{{poste.adresse}}</h6>
+                </div>
+                <img class="self-align-center" style="max-width: 100%; display: block;"
+                    src="{{ poste.image }}" alt="Card image">
+                <div class="card-body">
+                    <p class="card-text">{{ poste.descriptionImage}} </p>
+                    <a href="{{path('poste_show',{'id' : poste.id} )}} "><button type="button" class="btn btn-outline-primary">+ de détails</button></a>
+                </div>
+                <div class="card-footer text-muted">
+                    {{poste.datePoste|date("m/d/Y h:i") }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
