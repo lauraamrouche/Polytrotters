@@ -22,16 +22,17 @@
 
 
             <div class="card m-3">
-                <h3 class="card-header">{{poste.trotter}} {{poste.id}} </h3>
+                <h3 class="card-header">{{poste.id}} </h3>
                 <div class="card-body">
-                    <h5 class="card-title">{{poste.titrePoste}}</h5>
-                    <h6 class="card-subtitle text-muted">{{poste.adresse}}</h6>
+                    <h5 class="card-title">{{poste.titre}}</h5>
+                    <h6 class="card-subtitle text-muted">{{poste.ville}}</h6>
                 </div>
                 <img class="self-align-center" style="max-width: 100%; display: block;"
-                    src="{{ poste.image }}" alt="Card image">
+                    src="https://www.voyageavecnous.fr/wp-content/uploads/2015/01/plage-paradisiaque-image.jpg" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text">{{ poste.descriptionImage}} </p>
-                    <a href="{{path('poste_show',{'id' : poste.id} )}} "><button type="button" class="btn btn-outline-primary">+ de détails</button></a>
+                    <p class="card-text">{{poste.description}} </p>
+                    <a href="{{path('poste_show',{'id' : poste.id} )}} "><button type="button"
+                            class="btn btn-outline-primary">+ de détails</button></a>
                 </div>
                 <div class="card-footer text-muted">
                     {{poste.datePoste|date("m/d/Y h:i") }}

@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PosteRepository")
- * @ORM\HasLifecycleCallbacks
  */
 class Poste
 {
@@ -21,17 +21,12 @@ class Poste
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $image;
+    private $titre;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
-    private $trotter;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $descriptionImage;
+    private $description;
 
     /**
      * @ORM\Column(type="datetime")
@@ -41,56 +36,49 @@ class Poste
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $adresse;
+    private $ville;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="postes")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $titrePoste;
+    private $trotter;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity="App\Entity\Photo", mappedBy="posteId")
      */
-    private $urlPoste;
+    private $photos;
 
+    public function __construct()
+    {
+        $this->photos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getImage(): ?string
+    public function getTitre(): ?string
     {
-        return $this->image;
+        return $this->titre;
     }
 
-    public function setImage(string $image): self
+    public function setTitre(string $titre): self
     {
-        $this->image = $image;
+        $this->titre = $titre;
 
         return $this;
     }
 
-    public function getTrotter(): ?string
+    public function getDescription(): ?string
     {
-        return $this->trotter;
+        return $this->description;
     }
 
-    public function setTrotter(string $trotter): self
+    public function setDescription(string $description): self
     {
-        $this->trotter = $trotter;
-
-        return $this;
-    }
-
-    public function getDescriptionImage(): ?string
-    {
-        return $this->descriptionImage;
-    }
-
-    public function setDescriptionImage(string $descriptionImage): self
-    {
-        $this->descriptionImage = $descriptionImage;
+        $this->description = $description;
 
         return $this;
     }
@@ -107,38 +95,57 @@ class Poste
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getVille(): ?string
     {
-        return $this->adresse;
+        return $this->ville;
     }
 
-    public function setAdresse(string $adresse): self
+    public function setVille(string $ville): self
     {
-        $this->adresse = $adresse;
+        $this->ville = $ville;
 
         return $this;
     }
 
-    public function getTitrePoste(): ?string
+    public function getTrotter(): ?User
     {
-        return $this->titrePoste;
+        return $this->trotter;
     }
 
-    public function setTitrePoste(string $titrePoste): self
+    public function setTrotter(?User $trotter): self
     {
-        $this->titrePoste = $titrePoste;
+        $this->trotter = $trotter;
 
         return $this;
     }
 
-    public function getUrlPoste(): ?string
+    /**
+     * @return Collection|Photo[]
+     */
+    public function getPhotos(): Collection
     {
-        return $this->urlPoste;
+        return $this->photos;
     }
 
-    public function setUrlPoste(string $urlPoste): self
+    public function addPhoto(Photo $photo): self
     {
-        $this->urlPoste = $urlPoste;
+        if (!$this->photos->contains($photo)) {
+            $this->photos[] = $photo;
+            $photo->setPosteId($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(Photo $photo): self
+    {
+        if ($this->photos->contains($photo)) {
+            $this->photos->removeElement($photo);
+            // set the owning side to null (unless already changed)
+            if ($photo->getPosteId() === $this) {
+                $photo->setPosteId(null);
+            }
+        }
 
         return $this;
     }
