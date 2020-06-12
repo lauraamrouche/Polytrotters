@@ -45,13 +45,49 @@ class Poste
     private $trotter;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Photo", mappedBy="posteId")
+     * @ORM\OneToMany(targetEntity="App\Entity\Photo", mappedBy="poste", cascade={"remove"})
      */
     private $photos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Commentaire", mappedBy="poste", orphanRemoval=true)
+     */
+    private $commentaires;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LikePoste", mappedBy="poste", orphanRemoval=true)
+     */
+    private $likePostes;
+
+    /**
+     * Retourne si l'user like le poste ou pas
+     *
+     * @param User $user
+     * @return boolean
+     */
+    function isLikedByUser(User $user): bool
+    {
+        if (is_null($user)) {
+            return false;
+        }
+        foreach ($this->likePostes as $like) {
+            if ($like->getTrotter() === $user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function firstPhoto()
+    {
+        return $this->getPhotos()->first();
+    }
 
     public function __construct()
     {
         $this->photos = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
+        $this->likePostes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,7 +167,7 @@ class Poste
     {
         if (!$this->photos->contains($photo)) {
             $this->photos[] = $photo;
-            $photo->setPosteId($this);
+            $photo->setPoste($this);
         }
 
         return $this;
@@ -142,8 +178,70 @@ class Poste
         if ($this->photos->contains($photo)) {
             $this->photos->removeElement($photo);
             // set the owning side to null (unless already changed)
-            if ($photo->getPosteId() === $this) {
-                $photo->setPosteId(null);
+            if ($photo->getPoste() === $this) {
+                $photo->setPoste(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentaire[]
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setPoste($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->contains($commentaire)) {
+            $this->commentaires->removeElement($commentaire);
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getPoste() === $this) {
+                $commentaire->setPoste(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LikePoste[]
+     */
+    public function getLikePostes(): Collection
+    {
+        return $this->likePostes;
+    }
+
+    public function addLikePoste(LikePoste $likePoste): self
+    {
+        if (!$this->likePostes->contains($likePoste)) {
+            $this->likePostes[] = $likePoste;
+            $likePoste->setPoste($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikePoste(LikePoste $likePoste): self
+    {
+        if ($this->likePostes->contains($likePoste)) {
+            $this->likePostes->removeElement($likePoste);
+            // set the owning side to null (unless already changed)
+            if ($likePoste->getPoste() === $this) {
+                $likePoste->setPoste(null);
             }
         }
 

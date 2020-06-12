@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Création {% endblock %}
+
+{% form_theme form _self %}
+
+{% block body %}
+<div class="container">
+
+    <h1>Ajouter un Poste</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-success">Ajouter le Poste</button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
+{% block _poste_photos_widget %}
+<p>Ajoutez vos images</p>
+
+{{ form_widget(form) }}
+
+<input type="hidden" id="widgets-counter" value="0">
+<div class="form-group">
+    <button type="button" id="add-photo" class="btn btn-primary">Ajouter une image</button>
+</div>
+{% endblock %}
+
+{% block _poste_photos_entry_row %}
+{{ form_widget(form) }}
+
+{% endblock  %}
+
+{% block _poste_photos_entry_widget %}
+<div class="form-group" id="block_{{id}}">
+    <div class="row">
+        <div class="col-10">
+            <div class="row">
+                <div class="col">
+                    {{ form_widget(form.urlPhoto) }}
+                </div>
+                <div class="col">
+                    {{ form_widget(form.nom) }}
+                </div>
+                <div class="col">
+                    {{ form_widget(form.descriptionPhoto) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+
+<script>
+    $("#add-photo").click(function () {
+
+        // Le numero du futur champ que je vais créer
+        const index = +$("#widgets-counter").val();
+
+        console.log(index); 
+
+        // On récupère le prototype du futur
+        const tmpl = $("#poste_photos").data("prototype").replace(/__name__/g, index);
+
+        // J'injecte le code dans la div
+        $("#poste_photos").append(tmpl);
+
+        $("#widgets-counter").val(index + 1);
+        // Je gère le bouton de suppression
+        handleDeleteButtons();
+
+    });
+
+    function handleDeleteButtons(){
+        $("button[data-action='delete']").click(function(){
+            const target = this.dataset.target;
+            $(target).remove();
+        });
+    }
+
+</script>
+
+{% endblock %}

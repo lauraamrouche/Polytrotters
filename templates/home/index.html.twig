@@ -17,28 +17,12 @@
         </p>
         <hr>
         <div class="container">
+            <div class="row">
+                {% for poste in postes %}
 
-            {% for poste in postes %}
-
-
-            <div class="card m-3">
-                <h3 class="card-header">{{poste.id}} </h3>
-                <div class="card-body">
-                    <h5 class="card-title">{{poste.titre}}</h5>
-                    <h6 class="card-subtitle text-muted">{{poste.ville}}</h6>
-                </div>
-                <img class="self-align-center" style="max-width: 100%; display: block;"
-                    src="https://www.voyageavecnous.fr/wp-content/uploads/2015/01/plage-paradisiaque-image.jpg" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text">{{poste.description}} </p>
-                    <a href="{{path('poste_show',{'id' : poste.id} )}} "><button type="button"
-                            class="btn btn-outline-primary">+ de détails</button></a>
-                </div>
-                <div class="card-footer text-muted">
-                    {{poste.datePoste|date("m/d/Y h:i") }}
-                </div>
+                {% include "poste/_poste.html.twig" %}
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
 

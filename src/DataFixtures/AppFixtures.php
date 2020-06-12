@@ -2,6 +2,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Commentaire;
+use App\Entity\LikeCommentaire;
+use App\Entity\LikePoste;
 use Faker\Factory;
 use App\Entity\User;
 use App\Entity\Photo;
@@ -60,6 +63,30 @@ class AppFixtures extends Fixture
                 ->setVille($ville)
                 ->setTrotter($trotter);
             $manager->persist($poste);
+
+            for ($i = 0; $i < 5; $i++) {
+                if (mt_rand(0, 1)) {
+                    $commentaire = new Commentaire();
+                    $commentaire->setPoste($poste)
+                        ->setAuteur($users[mt_rand(0, count($users) - 1)])
+                        ->setContenu($faker->paragraph());
+                    $manager->persist($commentaire);
+                    for ($i = 0; $i < 2; $i++) {
+                        if (mt_rand(0, 1)) {
+                            $likeCommentaire = new LikeCommentaire();
+                            $likeCommentaire->setTrotter($users[mt_rand(0, count($users) - 1)])
+                                ->setCommentaire($commentaire);
+                            $manager->persist($likeCommentaire);
+                        }
+                    }
+                }
+                if (mt_rand(0, 1)) {
+                    $likePoste = new LikePoste();
+                    $likePoste->setTrotter($users[mt_rand(0, count($users) - 1)])
+                        ->setPoste($poste);
+                    $manager->persist($likePoste);
+                }
+            }
 
             for ($i = 0; $i < mt_rand(1, 4); $i++) {
 

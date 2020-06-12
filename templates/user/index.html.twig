@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page de {{user.pseudo}} {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row mt-3 align-items-center">
+        <div class="col-3 text-center">
+            <img src="{{user.avatarUser}} " alt="" class="avatar" class="mb-3">
+            <br>
+            <span class="badge badge-primary">{{user.postes | length}} postes</span>
+            <span class="badge badge-primary"><span id="nb-followers">{{user.followedBy | length}}</span>
+                Followers</span>
+        </div>
+        <div class="col-9">
+            <h1>{{user.pseudo}} </h1>
+            {% if app.user is not same as(user) %}
+            {% if app.user and user.isFollowedByUser(app.user) %}
+            <a href="{{path('follow_user', {'id' : user.id})}}" onclick="followUser({{user.id}})"
+                class="badge badge-primary" id="user-page">Ne plus suivre</a>
+            {% else %}
+            <a href="{{path('follow_user', {'id' : user.id})}}" onclick="followUser({{user.id}})"
+                class="badge badge-secondary" id="user-page">Suivre</a>
+            {% endif %}
+            {% endif %}
+            {% if user is same as(app.user) %}
+            <div class="mt-3">
+                <a href="{{path('account_profile')}}" class="btn btn-primary mr-2 mb-2">Modifier mes informations</a>
+                <a href="{{path('account_password')}}" class="btn btn-primary mb-2">Modifier mon mot de passe</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {{user.descriptionUser}}
+    <hr>
+    <h2>Les postes de {{user.pseudo}} </h2>
+    {% if user.postes | length > 0 %}
+    <div class="row">
+        {% for poste in user.postes %}
+        {% include "poste/_poste.html.twig" %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <p>
+            <strong>{{user.pseudo}}</strong> n'a pas encore de postes.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block javascripts %}
+
+<script>
+    function followUser(id) {
+        event.preventDefault();
+
+        const url = $("#user-page").attr('href');
+        axios.get(url).then(function (response) {
+            $("#nb-followers").text(response.data.followers);
+            message = response.data.message;
+            if (message.includes("Unfollow")) {
+                $('#user-page').removeClass('badge-primary').addClass('badge-secondary');
+                $('#user-page').text("Suivre");
+            } else {
+                $('#user-page').removeClass('badge-secondary').addClass('badge-primary');
+                $('#user-page').text("Ne plus suivre");
+            }
+        }).catch(function (error) {
+            if (error.response.status === 403) {
+                alert("Vous devez être connecté pour pouvoir suivre un trotter");
+            }
+        });
+    }
+
+</script>
+
+{% endblock %}

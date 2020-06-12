@@ -1,0 +1,15 @@
+<div class="col-md-4">
+    <a href="{{path('user_show',{'id' : poste.trotter.id} )}}">
+    <div class="card-header text-center">
+        @{{poste.trotter.pseudo}}
+    </div>
+</a>
+    <img src="{{poste.firstPhoto.urlPhoto}} " alt="" style="height: 200px; max-width: 100%" class="align-items-center">
+    <div class="card-body">
+        <h4 class="card-title">{{poste.titre}} </h4>
+        <p class="card-text">
+            {{poste.description}}
+        </p>
+        <a href="{{path('poste_show',{'id' : poste.id} )}}" class="btn btn-primary">Voir le poste</a>
+    </div>
+</div>

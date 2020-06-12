@@ -72,9 +72,58 @@ class User implements UserInterface
      */
     private $postes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Commentaire", mappedBy="auteur", orphanRemoval=true)
+     */
+    private $yes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LikePoste", mappedBy="trotter", orphanRemoval=true)
+     */
+    private $likePostes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LikeCommentaire", mappedBy="trotter")
+     */
+    private $likeCommentaires;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Follower", mappedBy="follower", orphanRemoval=true)
+     */
+    private $followers;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Follower", mappedBy="followed", orphanRemoval=true)
+     */
+    private $followedBy;
+
+    /**
+     * Retourne si l'user follow cet utilisateur ou pas
+     *
+     * @param User $user
+     * @return boolean
+     */
+    function isFollowedByUser(User $user): bool
+    {
+        if (is_null($user)) {
+            return false;
+        }
+        foreach ($this->followedBy as $follow) {
+            if ($follow->getFollower() === $user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function __construct()
     {
         $this->postes = new ArrayCollection();
+        $this->yes = new ArrayCollection();
+        $this->likePostes = new ArrayCollection();
+        $this->likeCommentaires = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->followedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,5 +252,160 @@ class User implements UserInterface
     }
 
     public function eraseCredentials(){}
+
+    /**
+     * @return Collection|Commentaire[]
+     */
+    public function getYes(): Collection
+    {
+        return $this->yes;
+    }
+
+    public function addYe(Commentaire $ye): self
+    {
+        if (!$this->yes->contains($ye)) {
+            $this->yes[] = $ye;
+            $ye->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeYe(Commentaire $ye): self
+    {
+        if ($this->yes->contains($ye)) {
+            $this->yes->removeElement($ye);
+            // set the owning side to null (unless already changed)
+            if ($ye->getAuteur() === $this) {
+                $ye->setAuteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LikePoste[]
+     */
+    public function getLikePostes(): Collection
+    {
+        return $this->likePostes;
+    }
+
+    public function addLikePoste(LikePoste $likePoste): self
+    {
+        if (!$this->likePostes->contains($likePoste)) {
+            $this->likePostes[] = $likePoste;
+            $likePoste->setTrotter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikePoste(LikePoste $likePoste): self
+    {
+        if ($this->likePostes->contains($likePoste)) {
+            $this->likePostes->removeElement($likePoste);
+            // set the owning side to null (unless already changed)
+            if ($likePoste->getTrotter() === $this) {
+                $likePoste->setTrotter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LikeCommentaire[]
+     */
+    public function getLikeCommentaires(): Collection
+    {
+        return $this->likeCommentaires;
+    }
+
+    public function addLikeCommentaire(LikeCommentaire $likeCommentaire): self
+    {
+        if (!$this->likeCommentaires->contains($likeCommentaire)) {
+            $this->likeCommentaires[] = $likeCommentaire;
+            $likeCommentaire->setTrotter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikeCommentaire(LikeCommentaire $likeCommentaire): self
+    {
+        if ($this->likeCommentaires->contains($likeCommentaire)) {
+            $this->likeCommentaires->removeElement($likeCommentaire);
+            // set the owning side to null (unless already changed)
+            if ($likeCommentaire->getTrotter() === $this) {
+                $likeCommentaire->setTrotter(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Follower[]
+     */
+    public function getFollowers(): Collection
+    {
+        return $this->followers;
+    }
+
+    public function addFollower(Follower $follower): self
+    {
+        if (!$this->followers->contains($follower)) {
+            $this->followers[] = $follower;
+            $follower->setFollower($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFollower(Follower $follower): self
+    {
+        if ($this->followers->contains($follower)) {
+            $this->followers->removeElement($follower);
+            // set the owning side to null (unless already changed)
+            if ($follower->getFollower() === $this) {
+                $follower->setFollower(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Follower[]
+     */
+    public function getFollowedBy(): Collection
+    {
+        return $this->followedBy;
+    }
+
+    public function addFollowedBy(Follower $followedBy): self
+    {
+        if (!$this->followedBy->contains($followedBy)) {
+            $this->followedBy[] = $followedBy;
+            $followedBy->setFollowed($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFollowedBy(Follower $followedBy): self
+    {
+        if ($this->followedBy->contains($followedBy)) {
+            $this->followedBy->removeElement($followedBy);
+            // set the owning side to null (unless already changed)
+            if ($followedBy->getFollowed() === $this) {
+                $followedBy->setFollowed(null);
+            }
+        }
+
+        return $this;
+    }
 
 }
